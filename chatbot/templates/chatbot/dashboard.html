@@ -1,0 +1,31 @@
+<!-- chatbot/templates/chatbot/dashboard.html -->
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width: 700px; margin: 40px auto;">
+    <h2 style="color: teal;">AI Chatbot</h2>
+
+    <div style="border: 1px solid #ccc; padding: 20px; background: #f9f9f9; height: 400px; overflow-y: scroll; margin-bottom: 20px; border-radius: 10px;">
+        {% for message in messages %}
+            <div style="margin-bottom: 15px; text-align: {% if message.sender == 'user' %}right{% else %}left{% endif %};">
+                <div style="display: inline-block; padding: 10px 15px; background: {% if message.sender == 'user' %}#00C4B4{% else %}#e0e0e0{% endif %}; color: {% if message.sender == 'user' %}white{% else %}black{% endif %}; border-radius: 10px;">
+                    {{ message.content }}
+                </div>
+                <div style="font-size: 10px; color: gray;">{{ message.timestamp|date:"H:i" }}</div>
+            </div>
+        {% empty %}
+            <p>No messages yet.</p>
+        {% endfor %}
+    </div>
+
+    <form method="post" style="display: flex; flex-direction: column; gap: 10px;">
+        {% csrf_token %}
+        {{ form.content }}
+        <button type="submit" style="background-color: #00C4B4; color: white; padding: 10px; border: none; border-radius: 5px;">Send</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'logout' %}" style="color: red;">Logout</a>
+    </div>
+</div>
+{% endblock %}
