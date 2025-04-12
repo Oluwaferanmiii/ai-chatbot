@@ -1,4 +1,3 @@
-from .forms import ChatForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -52,28 +51,34 @@ def logout_user(request):
 @login_required
 def dashboard(request):
     user = request.user
-    messages_qs = Message.objects.filter(user=user).order_by('timestamp')
-    form = ChatForm()
+    messages = Message.objects.filter(user=user).order_by('timestamp')
+    form = MessageForm()
 
     if request.method == 'POST':
-        form = ChatForm(request.POST)
+        form = MessageForm(request.POST)
         if form.is_valid():
-            # Save user message
-            user_msg = form.save(commit=False)
-            user_msg.sender = 'user'
-            user_msg.user = user
-            user_msg.save()
+            user_message = form.cleaned_data['content']
 
-            # Generate a simple dummy bot response
-            bot_response = Message.objects.create(
-                sender='bot',
-                content="This is a dummy AI response. 🤖",
+            # Save user message
+            Message.objects.create(
+                sender='user',
+                content=user_message,
+                timestamp=timezone.now(),
                 user=user
             )
 
-            return redirect('dashboard')
+            # Placeholder bot logic (we’ll improve this soon!)
+            bot_response = "This is a dummy bot reply. I'll get smarter later 😄"
+            Message.objects.create(
+                sender='bot',
+                content=bot_response,
+                timestamp=timezone.now(),
+                user=user
+            )
+
+            return redirect('dashboard')  # Refresh to show new messages
 
     return render(request, 'chatbot/dashboard.html', {
-        'form': form,
-        'messages': messages_qs
+        'messages': messages,
+        'form': form
     })
