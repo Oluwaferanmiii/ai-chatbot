@@ -1,4 +1,5 @@
 from django import forms
+from .models import Message  # Make sure this import is here
 
 
 class MessageForm(forms.ModelForm):
@@ -10,3 +11,7 @@ class MessageForm(forms.ModelForm):
         }),
         label=''
     )
+
+    class Meta:
+        model = Message
+        fields = ['content']
