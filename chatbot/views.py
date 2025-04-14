@@ -6,6 +6,7 @@ from django.contrib import messages
 from .models import Message
 from .forms import MessageForm
 from django.utils import timezone
+from .bot import get_bot_response
 
 
 def register_user(request):
@@ -67,8 +68,7 @@ def dashboard(request):
                 user=user
             )
 
-            # Placeholder bot logic (we’ll improve this soon!)
-            bot_response = "This is a dummy bot reply. I'll get smarter later 😄"
+            bot_response = get_bot_response(user_message)
             Message.objects.create(
                 sender='bot',
                 content=bot_response,
