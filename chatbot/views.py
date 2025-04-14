@@ -7,6 +7,7 @@ from .models import Message
 from .forms import MessageForm
 from django.utils import timezone
 from .bot import get_bot_response
+from .hf_bot import ask_bot_huggingface
 
 
 def register_user(request):
@@ -68,7 +69,8 @@ def dashboard(request):
                 user=user
             )
 
-            bot_response = get_bot_response(user_message)
+            # bot_response = get_bot_response(user_message) (Openai bot response)
+            bot_response = ask_bot_huggingface(user_message)
             Message.objects.create(
                 sender='bot',
                 content=bot_response,
