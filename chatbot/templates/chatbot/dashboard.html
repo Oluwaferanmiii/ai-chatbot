@@ -2,30 +2,58 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="container" style="max-width: 700px; margin: 40px auto;">
-    <h2 style="color: teal;">AI Chatbot</h2>
 
-    <div style="border: 1px solid #ccc; padding: 20px; background: #f9f9f9; height: 400px; overflow-y: scroll; margin-bottom: 20px; border-radius: 10px;">
-        {% for message in messages %}
-            <div style="margin-bottom: 15px; text-align: {% if message.sender == 'user' %}right{% else %}left{% endif %};">
-                <div style="display: inline-block; padding: 10px 15px; background: {% if message.sender == 'user' %}#00C4B4{% else %}#e0e0e0{% endif %}; color: {% if message.sender == 'user' %}white{% else %}black{% endif %}; border-radius: 10px;">
-                    {{ message.content }}
-                </div>
-                <div style="font-size: 10px; color: gray;">{{ message.timestamp|date:"H:i" }}</div>
-            </div>
-        {% empty %}
-            <p>No messages yet.</p>
+<div style="display: flex; height: 100vh; background-color: #1e1e1e; color: white;">
+
+  <!-- Left Sidebar -->
+  <div style="width: 250px; background-color: #2c2c2c; padding: 1rem; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <a href="{% url 'new_chat' %}" class="btn" style="background: #00C4B4; padding: 0.5rem 1rem; color: white; border-radius: 5px;">New Chat</a>
+      <a href="{% url 'logout' %}" class="btn" style="color: #00C4B4;">Logout</a>
+    </div>
+
+    <h4>Previous Chats</h4>
+    <ul style="list-style: none; padding-left: 0;">
+      {% for session in sessions %}
+        <li style="margin-bottom: 0.5rem;">
+          <a href="?session_id={{ session.id }}" style="color: white; text-decoration: none;">
+            Chat on {{ session.created_at|date:"M d, H:i" }}
+          </a>
+        </li>
+      {% empty %}
+        <li>No chat history yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Chat Area -->
+  <div style="flex: 1; display: flex; flex-direction: column; padding: 1rem;">
+    <div style="flex: 1; overflow-y: auto; margin-bottom: 1rem;">
+
+      {% if current_session %}
+        {% for msg in messages %}
+          <div style="margin-bottom: 1rem;">
+            <strong style="color: {{ msg.sender == 'user'|yesno:'#00C4B4,#fff' }}">{{ msg.sender|capfirst }}</strong>:
+            <p style="margin: 0;">{{ msg.content }}</p>
+          </div>
         {% endfor %}
+      {% else %}
+        <p style="text-align: center; margin-top: 2rem;">Select a chat or start a new one to begin.</p>
+      {% endif %}
+
     </div>
 
-    <form method="post" style="display: flex; flex-direction: column; gap: 10px;">
-        {% csrf_token %}
-        {{ form.content }}
-        <button type="submit" style="background-color: #00C4B4; color: white; padding: 10px; border: none; border-radius: 5px;">Send</button>
+    {% if current_session %}
+    <form method="post" action="{% url 'send_message' %}" style="display: flex;">
+      {% csrf_token %}
+      <input type="hidden" name="session_id" value="{{ current_session.id }}">
+      <input type="text" name="message" placeholder="Type your message..." required
+             style="flex: 1; padding: 0.75rem; border-radius: 5px 0 0 5px; border: none;">
+      <button type="submit" style="background: #00C4B4; border: none; color: white; padding: 0 1.5rem; border-radius: 0 5px 5px 0;">Send</button>
     </form>
+    {% endif %}
+  </div>
 
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'logout' %}" style="color: red;">Logout</a>
-    </div>
 </div>
+
 {% endblock %}

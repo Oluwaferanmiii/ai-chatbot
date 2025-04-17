@@ -87,6 +87,7 @@ def logout_user(request):
 #         'form': form
 #     })
 
+@login_required
 def dashboard(request):
     user = request.user
     session_id = request.GET.get('session_id')
