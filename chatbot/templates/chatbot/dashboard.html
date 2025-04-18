@@ -47,7 +47,7 @@
     <form method="post" action="{% url 'send_message' %}" style="display: flex;">
       {% csrf_token %}
       <input type="hidden" name="session_id" value="{{ current_session.id }}">
-      <input type="text" name="messssage" placeholder="Type your message..." required
+      <input type="text" name="message" placeholder="Type your message..." required
              style="flex: 1; padding: 0.75rem; border-radius: 5px 0 0 5px; border: none;">
       <button type="submit" style="background: #00C4B4; border: none; color: white; padding: 0 1.5rem; border-radius: 0 5px 5px 0;">Send</button>
     </form>
