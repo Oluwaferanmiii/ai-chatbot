@@ -31,7 +31,7 @@
     <div style="flex: 1; overflow-y: auto; margin-bottom: 1rem;">
 
       {% if current_session %}
-        {% for msg in messsages %}
+        {% for msg in messages %}
           <div style="margin-bottom: 1rem;">
             <strong style="color: {% if msg.sender == 'user' %}#00C4B4{% else %}#fff{% endif %}">{{ msg.sender|capfirst }}</strong>:
             <p style="margin: 0;">{{ msg.content }}</p>
